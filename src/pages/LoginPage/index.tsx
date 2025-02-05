@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import axios from "axios";
 import { Box, Button, TextField, Typography, useTheme } from "@mui/material";
 import {
   Controller,
@@ -11,38 +10,36 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthProfileWrapper from "../../shared/ui/PageWrapper";
 import InputPassword from "../../shared/ui/InputPassword";
 import SnackbarError from "../../shared/ui/SnackbarError";
-import { InputProps } from "../../shared/types/types";
-import apiStore from "../../shared/api/fetchUser";
+import { IUser } from "../../shared/types/types";
+import { loginUser } from "../../features/auth/api/authApi";
 
-const Auth: React.FC = React.memo(() => {
+const LoginPage: React.FC = React.memo(() => {
+  const { handleSubmit, control } = useForm<IUser>();
   const navigate = useNavigate();
 
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorValue, setErrorValue] = useState("");
 
   const theme = useTheme();
   const color = theme.palette.mode === "dark" ? "#f0f0f0" : "#333333";
 
-  const { handleSubmit, control } = useForm<InputProps>();
-
-  const submitOnValid: SubmitHandler<InputProps> = useCallback(async (data) => {
-    try {
-      const jwtToken = (await apiStore.Auth(data)).token;
-      localStorage.setItem("token", jwtToken);
-      axios.defaults.headers["Authorization"] = `${jwtToken}`;
-      navigate("/profile");
-    } catch (error) {
-      setOpenSnackbar(true);
-      console.log(error);
-    }
-  }, [navigate]);
-
-  const submitOnInValid: SubmitErrorHandler<InputProps> = useCallback(
-    (data) => {
-      console.log(data);
+  const submitOnValid: SubmitHandler<IUser> = useCallback(
+    async (data) => {
+      try {
+        await loginUser(data);
+        navigate("/profile");
+      } catch (error) {
+        const errorMessage = (error as { message: string }).message;
+        setErrorValue(errorMessage);
+        console.error(errorMessage);
+      }
     },
-    []
+    [navigate]
   );
-  
+
+  const submitOnInValid: SubmitErrorHandler<IUser> = useCallback((data) => {
+    console.log(data);
+  }, []);
+
   return (
     <AuthProfileWrapper>
       <Typography sx={{ fontWeight: "700", marginBottom: 4 }} variant="h4">
@@ -72,25 +69,21 @@ const Auth: React.FC = React.memo(() => {
               variant="h6"
               sx={{ alignSelf: "start", marginBottom: 0.5 }}
             >
-              Email
+              Login
             </Typography>
             <Controller
-              name="email"
+              name="login"
               control={control}
               defaultValue=""
               rules={{
-                required: "Укажите почту",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Неверный формат почты",
-                },
+                required: "Укажите логин",
               }}
               render={({ field, fieldState }) => (
                 <TextField
                   {...field}
                   sx={{ width: "100%" }}
-                  label="Введите ваш Email"
-                  error={!!fieldState.error}
+                  label="Введите ваш логин"
+                  error={!!fieldState.error || !!errorValue}
                   helperText={fieldState.error?.message}
                 />
               )}
@@ -114,7 +107,7 @@ const Auth: React.FC = React.memo(() => {
                 <InputPassword
                   {...field}
                   label="Введите пароль"
-                  error={!!fieldState.error}
+                  error={!!fieldState.error || !!errorValue}
                   helperText={fieldState.error?.message as string}
                 />
               )}
@@ -144,11 +137,12 @@ const Auth: React.FC = React.memo(() => {
         </Button>
       </form>
       <SnackbarError
-        open={openSnackbar}
-        handleClose={() => setOpenSnackbar(false)}
+        open={!!errorValue}
+        message={errorValue}
+        handleClose={() => setErrorValue("")}
       />
     </AuthProfileWrapper>
   );
 });
 
-export default Auth;
+export default LoginPage;

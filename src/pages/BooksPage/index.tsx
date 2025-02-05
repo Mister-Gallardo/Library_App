@@ -4,25 +4,24 @@ import { Box, Button, Typography, useTheme } from "@mui/material";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import KeyIcon from "@mui/icons-material/Key";
 import AuthProfileWrapper from "../../shared/ui/PageWrapper";
-import apiStore from "../../shared/api/fetchUser";
 
-const Profile: React.FC = React.memo(() => {
+const BookPage: React.FC = React.memo(() => {
   const navigate = useNavigate();
   const [email, setEmail] = useState();
   const [id, setId] = useState();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const resp = await apiStore.Profile();
-        setEmail(resp.email);
-        setId(resp.id);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    // const fetchUser = async () => {
+    //   try {
+    //     const resp = await apiStore.Profile();
+    //     setEmail(resp.email);
+    //     setId(resp.id);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
 
-    fetchUser();
+    // fetchUser();
   }, []);
 
   const theme = useTheme();
@@ -126,4 +125,4 @@ const Profile: React.FC = React.memo(() => {
   );
 });
 
-export default Profile;
+export default BookPage;

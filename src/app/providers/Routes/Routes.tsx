@@ -1,9 +1,9 @@
 import React from "react";
 import { Navigate, Route, Routes as RoutesWrap } from "react-router-dom";
 import Layout from "../../Layout/Layout";
-import Register from "../../../pages/register/Register";
-import Auth from "../../../pages/auth/Auth";
-import Profile from "../../../pages/profile/Profile";
+import Register from "../../../pages/RegisterPage";
+import Auth from "../../../pages/LoginPage";
+import Profile from "../../../pages/BooksPage";
 
 const Routes: React.FC = () => (
   <RoutesWrap>

@@ -1,8 +1,9 @@
 import { Alert, Snackbar } from "@mui/material";
 import React from "react";
 
-const SnackbarError: React.FC<{ open: boolean; handleClose: () => void }> = ({
+const SnackbarError: React.FC<{ open: boolean; message: string; handleClose: () => void }> = ({
   open,
+  message,
   handleClose,
 }) => (
   <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
@@ -12,7 +13,7 @@ const SnackbarError: React.FC<{ open: boolean; handleClose: () => void }> = ({
       variant="filled"
       sx={{ width: "100%" }}
     >
-      Произошла ошибка. Попробуйте снова!
+      {message}
     </Alert>
   </Snackbar>
 );

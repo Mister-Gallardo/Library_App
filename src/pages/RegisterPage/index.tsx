@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import axios from "axios";
+import { Box, Button, TextField, Typography, useTheme } from "@mui/material";
 import {
   Controller,
   SubmitErrorHandler,
@@ -17,35 +10,32 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthProfileWrapper from "../../shared/ui/PageWrapper";
 import InputPassword from "../../shared/ui/InputPassword";
 import SnackbarError from "../../shared/ui/SnackbarError";
-import { InputProps } from "../../shared/types/types";
-import apiStore from "../../shared/api/fetchUser";
+import { IUser } from "../../shared/types/types";
+import { registerUser } from "../../features/auth/api/authApi";
 
 const Register: React.FC = React.memo(() => {
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-
+  const { handleSubmit, control } = useForm<IUser>();
   const navigate = useNavigate();
+
+  const [errorValue, setErrorValue] = useState("");
 
   const theme = useTheme();
   const color = theme.palette.mode === "dark" ? "#f0f0f0" : "#333333";
 
-  const { handleSubmit, control } = useForm<InputProps>();
-
-  const submitOnValid: SubmitHandler<InputProps> = async (data) => {
+  const submitOnValid: SubmitHandler<IUser> = async (data) => {
     try {
-      const jwtToken = (await apiStore.Register(data)).token;
-      localStorage.setItem("token", jwtToken);
-      axios.defaults.headers["Authorization"] = `${jwtToken}`;
-      navigate('/profile');
+      await registerUser(data);
+      navigate("/profile");
     } catch (error) {
-      setOpenSnackbar(true);
-      console.log(error);
+      const errorMessage = (error as { message: string }).message;
+      setErrorValue(errorMessage);
+      console.error(errorMessage);
     }
   };
 
-  const submitOnInValid: SubmitErrorHandler<InputProps> = (data) => {
-    setOpenSnackbar(true);
+  const submitOnInValid: SubmitErrorHandler<IUser> = (data) => {
     console.log(data);
-  }
+  };
 
   return (
     <AuthProfileWrapper>
@@ -76,25 +66,25 @@ const Register: React.FC = React.memo(() => {
               variant="h6"
               sx={{ alignSelf: "start", marginBottom: 0.5 }}
             >
-              Email
+              Login
             </Typography>
             <Controller
-              name="email"
+              name="login"
               control={control}
               defaultValue=""
               rules={{
-                required: "Укажите почту",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Неверный формат почты",
+                required: "Укажите логин",
+                minLength: {
+                  value: 4,
+                  message: "Логин должен быть не менее 4 символов",
                 },
               }}
               render={({ field, fieldState }) => (
                 <TextField
                   {...field}
                   sx={{ width: "100%" }}
-                  label="Введите ваш Email"
-                  error={!!fieldState.error}
+                  label="Введите ваш логин"
+                  error={!!fieldState.error || !!errorValue}
                   helperText={fieldState.error?.message}
                 />
               )}
@@ -113,16 +103,16 @@ const Register: React.FC = React.memo(() => {
               defaultValue=""
               rules={{
                 required: "Укажите пароль",
-                pattern: {
-                  value: /^[a-zA-Z0-9]{6,}$/,
-                  message: "Неверный формат пароля",
+                minLength: {
+                  value: 6,
+                  message: "Пароль должен быть не менее 6 символов",
                 },
               }}
               render={({ field, fieldState }) => (
                 <InputPassword
                   {...field}
                   label="Придумайте пароль"
-                  error={!!fieldState.error}
+                  error={!!fieldState.error || !!errorValue}
                   helperText={fieldState.error?.message as string}
                 />
               )}
@@ -152,8 +142,9 @@ const Register: React.FC = React.memo(() => {
         </Button>
       </form>
       <SnackbarError
-        open={openSnackbar}
-        handleClose={() => setOpenSnackbar(false)}
+        open={!!errorValue}
+        message={errorValue}
+        handleClose={() => setErrorValue("")}
       />
     </AuthProfileWrapper>
   );

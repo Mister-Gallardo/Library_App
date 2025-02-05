@@ -1,5 +1,5 @@
-export interface InputProps {
-    email: string;
+export interface IUser {
+    login: string;
     password: string;
 }
 
