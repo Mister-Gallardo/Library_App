@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 Redirect</title>
+    <script>
+      // Редирект на корректный путь через параметр redirect
+      var redirectPath = window.location.pathname
+        .replace('/Crypton_Auth_App/', '')
+        .replace(/&/g, '~and~');
+      window.location.href = '/Crypton_Auth_App/?redirect=' + redirectPath;
+    </script>
+  </head>
+  <body></body>
+</html>
