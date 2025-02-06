@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 
-// Интерфейс для пропсов компонента
 interface InputPasswordProps {
   label: string;
   error: boolean;
@@ -47,7 +46,7 @@ const InputPassword = React.forwardRef<HTMLInputElement, InputPasswordProps>(
       >
         <InputLabel htmlFor="outlined-adornment-password">{label}</InputLabel>
         <OutlinedInput
-          ref={ref} // Применяем ref
+          ref={ref}
           id="outlined-adornment-password"
           type={showPassword ? "text" : "password"}
           value={value}

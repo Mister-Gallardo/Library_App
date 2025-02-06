@@ -42,11 +42,8 @@ const BookPageModal: React.FC<{
       genre: genreValue,
       year: +yearValue,
     };
-
-    // Отправляем запрос на добавление книги
     mutation.mutate(newBook);
 
-    // Очистка формы и закрытие модалки
     setTitleValue("");
     setAuthorValue("");
     setGenreValue("");

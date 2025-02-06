@@ -1,13 +1,13 @@
 import { Box, Button, Pagination, TextField, Typography } from "@mui/material";
 import React, { useState, useMemo } from "react";
+import { useQuery, useMutation } from "react-query";
 import BookCard from "./ui/BookCard";
 import { IBook } from "./type";
-import { getBookList } from "../../features/bookList/api/bookListApi"; // Изменённый запрос
+import { getBookList } from "../../features/bookList/api/bookListApi"; 
 import NoBooksMessage from "../../shared/ui/NoBooksMessage";
 import LogOutButton from "../../shared/ui/LogOutButton";
 import BookPageModal from "./ui/BookPageModal";
-import { useQuery, useMutation } from "react-query";
-import { addBook } from "../../features/bookList/api/bookListApi"; // Функция для добавления книги
+import { addBook } from "../../features/bookList/api/bookListApi";
 
 const BookPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
