@@ -26,7 +26,7 @@ const LoginPage: React.FC = React.memo(() => {
     async (data) => {
       try {
         await loginUser(data);
-        navigate("/profile");
+        navigate("/books");
       } catch (error) {
         const errorMessage = (error as { message: string }).message;
         setErrorValue(errorMessage);

@@ -25,7 +25,7 @@ const Register: React.FC = React.memo(() => {
   const submitOnValid: SubmitHandler<IUser> = async (data) => {
     try {
       await registerUser(data);
-      navigate("/profile");
+      navigate("/books");
     } catch (error) {
       const errorMessage = (error as { message: string }).message;
       setErrorValue(errorMessage);
