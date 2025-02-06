@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import axios from "axios";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ThemeProvider } from "./providers/ThemeContext";
 import Routes from "./providers/Routes/Routes";
@@ -23,8 +22,7 @@ const App: React.FC = () => {
     const jwtToken = localStorage.getItem("token");
 
     if (jwtToken) {
-      axios.defaults.headers["Authorization"] = `${jwtToken}`;
-      if (location.pathname !== "/profile") navigate("/profile");
+      if (location.pathname !== "/books") navigate("/books");
     }
   }, [location.pathname, navigate]);
 

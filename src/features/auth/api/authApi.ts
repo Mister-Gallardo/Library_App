@@ -9,8 +9,6 @@ export const loginUser = async (user: IUser) => {
       (u: IUser) => u.login === user.login && u.password === user.password
     );
 
-    console.log(currentUser);
-
     if (!currentUser) {
       throw new Error("Неверные учетные данные");
     }
@@ -25,6 +23,16 @@ export const loginUser = async (user: IUser) => {
 
 export const registerUser = async (user: IUser) => {
   try {
+    // Ввиду ограничений mock api приходится для проверки уникальности логина
+    // сначала получать всех пользователей, проверять уникальность и только потом отправлять данные.
+    const { data: users } = await baseApi.get("/users");
+
+    const existingUser = users.find((u: IUser) => u.login === user.login);
+
+    if (existingUser) {
+      throw new Error("Пользователь с таким логином уже существует");
+    }
+
     const { data } = await baseApi.post("/users", user);
 
     if (!data.token) {
@@ -32,9 +40,10 @@ export const registerUser = async (user: IUser) => {
     }
 
     localStorage.setItem("token", data.token);
-
     return data;
   } catch (error) {
     throw new Error((error as { message: string }).message);
   }
 };
+
+

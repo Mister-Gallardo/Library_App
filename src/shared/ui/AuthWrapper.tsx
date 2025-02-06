@@ -1,11 +1,11 @@
 import { Box, useTheme } from "@mui/material";
 import { ReactNode } from "react";
 
-interface AuthProfileWrapperProps {
+interface AuthWrapperProps {
   children: ReactNode;
 }
 
-const AuthProfileWrapper: React.FC<AuthProfileWrapperProps> = ({
+const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
 }) => {
   const theme = useTheme();
@@ -39,4 +39,4 @@ const AuthProfileWrapper: React.FC<AuthProfileWrapperProps> = ({
   );
 };
 
-export default AuthProfileWrapper;
+export default AuthWrapper;

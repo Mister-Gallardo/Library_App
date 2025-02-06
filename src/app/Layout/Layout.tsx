@@ -6,7 +6,7 @@ import ThemeToggleButton from "../../shared/ui/ThemeToggleButton";
 const Layout: React.FC = () => (
   <Box
     sx={{
-      height: "100vh",
+      minHeight: "100vh",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",

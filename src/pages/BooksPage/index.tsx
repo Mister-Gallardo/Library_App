@@ -1,128 +1,120 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Button, Typography, useTheme } from "@mui/material";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import KeyIcon from "@mui/icons-material/Key";
-import AuthProfileWrapper from "../../shared/ui/PageWrapper";
+import { Box, Button, Pagination, TextField, Typography } from "@mui/material";
+import React, { useState, useMemo } from "react";
+import BookCard from "./ui/BookCard";
+import { IBook } from "./type";
+import { getBookList } from "../../features/bookList/api/bookListApi"; // Изменённый запрос
+import NoBooksMessage from "../../shared/ui/NoBooksMessage";
+import LogOutButton from "../../shared/ui/LogOutButton";
+import BookPageModal from "./ui/BookPageModal";
+import { useQuery, useMutation } from "react-query";
+import { addBook } from "../../features/bookList/api/bookListApi"; // Функция для добавления книги
 
-const BookPage: React.FC = React.memo(() => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState();
-  const [id, setId] = useState();
+const BookPage: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    // const fetchUser = async () => {
-    //   try {
-    //     const resp = await apiStore.Profile();
-    //     setEmail(resp.email);
-    //     setId(resp.id);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
+  const { data, isLoading, error, refetch } = useQuery(["books"], getBookList);
 
-    // fetchUser();
-  }, []);
+  const mutation = useMutation(addBook, {
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
-  const theme = useTheme();
-  const color = theme.palette.mode === "dark" ? "#f0f0f0" : "#333333";
+  const filteredBooks = useMemo(() => {
+    if (!data) return [];
+    return data.filter((book: IBook) =>
+      book.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [data, searchTerm]);
 
-  const handleLeave = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
+  const itemsPerPage = 5;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const currentBooks = filteredBooks.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
+
+  if (isLoading) return <h3>Загрузка...</h3>;
+  if (error) return <h3>Ошибка...</h3>;
 
   return (
-    <AuthProfileWrapper>
-      <Typography sx={{ fontWeight: "700", marginBottom: 4 }} variant="h4">
-        Профиль
-      </Typography>
+    <>
       <Box
-        style={{
-          width: "100%",
+        sx={{
+          width: "70vw",
+          minWidth: 310,
+          maxWidth: 900,
+          margin: "0 auto",
+          marginTop: "30px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 50,
         }}
       >
+        <Typography
+          variant="h3"
+          sx={{ paddingBottom: "20px", textAlign: "center" }}
+        >
+          Список книг
+        </Typography>
+
         <Box
           sx={{
             width: "100%",
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 3,
+            flexDirection: { xs: "column", sm: "row" },
+            gap: { xs: 2, sm: 0 },
+            justifyContent: "space-between",
           }}
         >
-          <Box
-            sx={{
-              width: {
-                xs: "90%",
-                sm: "75%",
-              },
-              padding: "8px 12px",
-              border: "1px solid",
-              borderColor: color,
-              borderRadius: "10px",
-            }}
+          <Button
+            onClick={() => setOpen(true)}
+            sx={{ alignSelf: "start", fontSize: "18px", borderRadius: "10px" }}
+            variant="contained"
           >
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <MailOutlineIcon sx={{ marginTop: "6px", fontSize: 20 }} />
-              <Typography
-                variant="h5"
-                sx={{ alignSelf: "start", marginBottom: 0.5 }}
-              >
-                Ваш Email
-              </Typography>
-            </Box>
-            <Typography sx={{ fontWeight: "700", marginTop: 1 }}>
-              {email}
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              width: {
-                xs: "90%",
-                sm: "75%",
-              },
-              padding: "8px 12px",
-              border: "1px solid",
-              borderColor: color,
-              borderRadius: "10px",
-            }}
-          >
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <KeyIcon sx={{ marginTop: "6px", fontSize: 20 }} />
-              <Typography
-                variant="h5"
-                sx={{ alignSelf: "start", marginBottom: 0.5 }}
-              >
-                Ваш Id
-              </Typography>
-            </Box>
-            <Typography sx={{ fontWeight: "700", marginTop: 1 }}>
-              {id}
-            </Typography>
-          </Box>
+            Добавить книгу
+          </Button>
         </Box>
-        <Button
-          onClick={handleLeave}
+
+        <TextField
+          type="text"
+          placeholder="Поиск по названию"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ marginTop: 15, width: "100%" }}
+          variant="filled"
+        />
+
+        {currentBooks.length > 0 ? (
+          currentBooks.map((book: IBook) => (
+            <BookCard key={book.id} book={book} refetch={refetch} />
+          ))
+        ) : (
+          <NoBooksMessage />
+        )}
+
+        <Pagination
+          page={currentPage}
+          onChange={(_, page) => setCurrentPage(page)}
+          count={totalPages}
           variant="outlined"
           size="large"
-          sx={{
-            fontSize: 18,
-            borderColor: color,
-            color: color,
-            width: { xs: "90%", sm: "75%" },
-          }}
-        >
-          Выйти
-        </Button>
+          shape="rounded"
+          siblingCount={0}
+        />
+
+        <LogOutButton />
       </Box>
-    </AuthProfileWrapper>
+
+      <BookPageModal
+        open={open}
+        setOpen={setOpen}
+        mutation={mutation } 
+      />
+    </>
   );
-});
+};
 
 export default BookPage;

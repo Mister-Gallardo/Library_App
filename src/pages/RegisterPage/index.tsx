@@ -7,7 +7,7 @@ import {
   useForm,
 } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import AuthProfileWrapper from "../../shared/ui/PageWrapper";
+import AuthWrapper from "../../shared/ui/AuthWrapper";
 import InputPassword from "../../shared/ui/InputPassword";
 import SnackbarError from "../../shared/ui/SnackbarError";
 import { IUser } from "../../shared/types/types";
@@ -38,7 +38,7 @@ const Register: React.FC = React.memo(() => {
   };
 
   return (
-    <AuthProfileWrapper>
+    <AuthWrapper>
       <Typography sx={{ fontWeight: "700", marginBottom: 4 }} variant="h4">
         Регистрация
       </Typography>
@@ -64,7 +64,11 @@ const Register: React.FC = React.memo(() => {
           <Box sx={{ width: { xs: "90%", sm: "75%" } }}>
             <Typography
               variant="h6"
-              sx={{ alignSelf: "start", marginBottom: 0.5 }}
+              sx={{
+                alignSelf: "start",
+                marginBottom: 0.5,
+                color: errorValue ? "red" : "white",
+              }}
             >
               Login
             </Typography>
@@ -93,7 +97,11 @@ const Register: React.FC = React.memo(() => {
           <Box sx={{ width: { xs: "90%", sm: "75%" } }}>
             <Typography
               variant="h6"
-              sx={{ alignSelf: "start", marginBottom: 0.5 }}
+              sx={{
+                alignSelf: "start",
+                marginBottom: 0.5,
+                color: errorValue ? "red" : "white",
+              }}
             >
               Password
             </Typography>
@@ -146,7 +154,7 @@ const Register: React.FC = React.memo(() => {
         message={errorValue}
         handleClose={() => setErrorValue("")}
       />
-    </AuthProfileWrapper>
+    </AuthWrapper>
   );
 });
 
