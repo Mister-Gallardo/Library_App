@@ -47,7 +47,7 @@ const BookPage: React.FC = () => {
           minWidth: 310,
           maxWidth: 900,
           margin: "0 auto",
-          marginTop: "30px",
+          marginTop: {xs: '80px', sm: "30px"},
           display: "flex",
           flexDirection: "column",
           alignItems: "center",

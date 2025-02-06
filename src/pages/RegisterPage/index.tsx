@@ -130,7 +130,7 @@ const RegisterPage: React.FC = React.memo(() => {
             sx={{ width: { xs: "90%", sm: "75%" }, display: "flex", gap: 1 }}
           >
             <Typography>Уже есть аккаунт?</Typography>
-            <Link to="/auth" style={{ color: color }}>
+            <Link to="/login" style={{ color: color }}>
               Войти
             </Link>
           </Box>
