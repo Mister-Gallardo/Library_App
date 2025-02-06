@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter basename="/Crypton_Auth_App">
+    <BrowserRouter basename="/Library_App">
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
