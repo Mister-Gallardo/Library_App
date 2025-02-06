@@ -13,7 +13,7 @@ import SnackbarError from "../../shared/ui/SnackbarError";
 import { IUser } from "../../shared/types/types";
 import { registerUser } from "../../features/auth/api/authApi";
 
-const Register: React.FC = React.memo(() => {
+const RegisterPage: React.FC = React.memo(() => {
   const { handleSubmit, control } = useForm<IUser>();
   const navigate = useNavigate();
 
@@ -158,4 +158,4 @@ const Register: React.FC = React.memo(() => {
   );
 });
 
-export default Register;
+export default RegisterPage;

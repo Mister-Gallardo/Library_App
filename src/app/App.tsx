@@ -8,21 +8,17 @@ const App: React.FC = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  // обработка redirect-параметра из URL
-  useEffect(() => {
-    const redirect = searchParams.get("redirect");
-    if (redirect) {
-      navigate(redirect, { replace: true });
-    }
-  }, [searchParams, navigate]);
-
   useEffect(() => {
     const jwtToken = localStorage.getItem("token");
+    const redirect = searchParams.get("redirect");
 
-    if (jwtToken) {
-      if (location.pathname !== "/books") navigate("/books");
+    // если есть redirect или токен — выполняем нужную навигацию
+    if (redirect) {
+      navigate(redirect, { replace: true });
+    } else if (jwtToken && location.pathname !== "/books") {
+      navigate("/books", { replace: true });
     }
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, searchParams]);
 
   return (
     <ThemeProvider>
